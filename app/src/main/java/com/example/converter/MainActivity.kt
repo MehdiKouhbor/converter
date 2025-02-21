@@ -28,8 +28,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DarkThemeConverter() {
     var dpValue by remember { mutableStateOf("") }
-    var sdpValue by remember { mutableStateOf("") }
-    val conversionRatio = 0.833
+    var sdpPhoneValue by remember { mutableStateOf("") }
+    var sdpTabletValue by remember { mutableStateOf("") }
+    val conversionRatioPhone = 0.833
+    val conversionRatioTablet = 1.2
 
     Box(
         modifier = Modifier
@@ -56,7 +58,17 @@ fun DarkThemeConverter() {
 
                 OutlinedTextField(
                     value = dpValue,
-                    onValueChange = { dpValue = it },
+                    onValueChange = {
+                        dpValue = it
+                        val dpInput = it.toDoubleOrNull()
+                        if (dpInput != null) {
+                            sdpPhoneValue = (dpInput * conversionRatioPhone).toInt().toString()
+                            sdpTabletValue = (dpInput * conversionRatioTablet).toInt().toString()
+                        } else {
+                            sdpPhoneValue = ""
+                            sdpTabletValue = ""
+                        }
+                    },
                     label = { Text("Enter DP Value", color = Color.Gray) },
                     textStyle = LocalTextStyle.current.copy(color = Color.White),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -65,22 +77,14 @@ fun DarkThemeConverter() {
                     )
                 )
 
-                Button(
-                    onClick = {
-                        val dpInput = dpValue.toDoubleOrNull()
-                        sdpValue = if (dpInput != null) {
-                            (dpInput * conversionRatio).toInt().toString()
-                        } else {
-                            "Invalid input"
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBB86FC))
-                ) {
-                    Text("Convert", color = Color.White)
-                }
+                Text(
+                    text = "Equivalent value for Phone: $sdpPhoneValue",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
 
                 Text(
-                    text = "Equivalent value in SDP: $sdpValue",
+                    text = "Equivalent value for Tablet: $sdpTabletValue",
                     fontSize = 16.sp,
                     color = Color.White
                 )
